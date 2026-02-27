@@ -1,7 +1,7 @@
 // src/App.jsx
 
 import { useState, useEffect } from "react";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login";
 import UserDashboard from "./pages/UserDashboard";
@@ -65,7 +65,7 @@ function App() {
 
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <Routes>
 
         {/* LOGIN */}
@@ -115,7 +115,7 @@ function App() {
 />
 
       </Routes>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 
