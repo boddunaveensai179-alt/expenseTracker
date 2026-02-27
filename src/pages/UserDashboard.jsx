@@ -1,59 +1,79 @@
+import { useNavigate, Navigate } from "react-router-dom";
 import ExpenseForm from "../components/ExpenseForm";
 import ExpenseList from "../components/ExpenseList";
-import { useNavigate } from "react-router-dom";
+import ExpenseSummary from "../components/ExpenseSummary";
 
-function UserDashboard({ expenses, currentUser, addExpense, deleteExpense }) {
-  if (!currentUser) return <h2>Please login</h2>;
+function UserDashboard({
+  expenses,
+  currentUser,
+  addExpense,
+  deleteExpense,
+  setCurrentUser
+}) {
 
-  const userExpenses = expenses.filter((exp) => exp.userId === currentUser.id);
   const navigate = useNavigate();
 
-  const total = userExpenses.reduce((sum, exp) => sum + exp.amount, 0);
+ 
+  if (!currentUser) {
+    return <Navigate to="/" />;
+  }
+
+ 
+  const userExpenses = expenses.filter(
+    (exp) => exp.userId === currentUser.id
+  );
+
+  
+  const handleLogout = () => {
+    setCurrentUser(null);
+    navigate("/");
+  };
 
   return (
     <div className="dashboard">
+
+      {/* SIDEBAR */}
       <div className="sidebar">
         <h2>Expense Tracker</h2>
         <p>{currentUser.username}</p>
-        <button>Dashboard</button>
-        <button onClick={() => navigate("/transactions")}>Transactions</button>
+
+        <button onClick={() => navigate("/user")}>
+          Dashboard
+        </button>
+
+        <button onClick={() => navigate("/transactions")}>
+          Transactions
+        </button>
+
+        <button onClick={handleLogout}>
+          Logout
+        </button>
       </div>
 
+      {/* MAIN CONTENT */}
       <div className="main">
-        <h2>Dashboard</h2>
+        <h2>User Dashboard</h2>
 
-        <div className="summary-cards">
-          <div className="card-box income">
-            <h3>Total Income</h3>
-            <p>Rs {total + 2000}</p>
-          </div>
+        <ExpenseSummary expenses={userExpenses} />
 
-          <div className="card-box expense">
-            <h3>Total Expenses</h3>
-            <p>Rs {total}</p>
-          </div>
-
-          <div className="card-box balance">
-            <h3>Balance</h3>
-            <p>Rs {2000}</p>
-          </div>
-
-          <div className="card-box transactions">
-            <h3>Transactions</h3>
-            <p>{userExpenses.length}</p>
-          </div>
+        <div className="card">
+          <ExpenseForm
+            addExpense={addExpense}
+            currentUser={currentUser}
+          />
         </div>
 
         <div className="card">
-          <ExpenseForm addExpense={addExpense} currentUser={currentUser} />
-        </div>
-
-        <div className="card">
-          <ExpenseList expenses={userExpenses} deleteExpense={deleteExpense} />
+          <ExpenseList
+            expenses={userExpenses}
+            deleteExpense={deleteExpense}
+          />
         </div>
       </div>
+
     </div>
   );
 }
+
 
 export default UserDashboard;

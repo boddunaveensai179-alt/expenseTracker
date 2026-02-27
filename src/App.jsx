@@ -1,4 +1,4 @@
-// src/App.jsx
+
 
 import { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
@@ -17,36 +17,30 @@ import {
 
 function App() {
 
+
   const [users, setUsers] = useState([]);
   const [expenses, setExpenses] = useState(loadLocalExpenses());
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
+ 
   useEffect(() => {
     const loadData = async () => {
-      try {
-        setLoading(true);
+      const userData = await fetchUsers();
+      setUsers(userData);
 
-       
-        const userData = await fetchUsers();
-        setUsers(userData);
-
-        
-        if (expenses.length === 0) {
-          const apiExpenses = await fetchExpensesFromAPI();
-          setExpenses(apiExpenses);
-        }
-
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+     
+      if (expenses.length === 0) {
+        const apiExpenses = await fetchExpensesFromAPI();
+        setExpenses(apiExpenses);
       }
+
+      setLoading(false);
     };
 
     loadData();
   }, []);
+
 
   useEffect(() => {
     saveLocalExpenses(expenses);
@@ -61,8 +55,6 @@ function App() {
   };
 
   if (loading) return <h2>Loading...</h2>;
-  if (error) return <h2>Error: {error}</h2>;
-
 
   return (
     <BrowserRouter>
@@ -88,11 +80,23 @@ function App() {
               currentUser={currentUser}
               addExpense={addExpense}
               deleteExpense={deleteExpense}
+              setCurrentUser={setCurrentUser}
             />
           }
         />
 
-        {/* ADMIN DASHBOARD */}
+    
+        <Route
+          path="/transactions"
+          element={
+            <Transactions
+              expenses={expenses}
+              currentUser={currentUser}
+            />
+          }
+        />
+
+      
         <Route
           path="/admin"
           element={
@@ -100,19 +104,11 @@ function App() {
               expenses={expenses}
               users={users}
               deleteExpense={deleteExpense}
+              setCurrentUser={setCurrentUser}
               currentUser={currentUser}
             />
           }
         />
-        <Route
-  path="/transactions"
-  element={
-    <Transactions
-      expenses={expenses}
-      currentUser={currentUser}
-    />
-  }
-/>
 
       </Routes>
     </BrowserRouter>
