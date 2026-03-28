@@ -150,12 +150,12 @@ button {
 }
 
 .btn-primary {
-  background: #4facfe;
+  background: grey;
   color: white;
 }
 
 .btn-primary:hover {
-  background: #00c6ff;
+  background: darkgray;
 }
 
 .btn-danger {
