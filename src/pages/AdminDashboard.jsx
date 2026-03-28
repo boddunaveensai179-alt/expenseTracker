@@ -1,39 +1,54 @@
+import ExpenseList from "../components/ExpenseList";
 import ExpenseSummary from "../components/ExpenseSummary";
+import { useNavigate } from "react-router-dom";
 
-function AdminDashboard({ expenses, users, deleteExpense, currentUser }) {
-  if (!currentUser) return <h2>Please login</h2>;
+function AdminDashboard({
+  expenses,
+  users,
+  deleteExpense,
+  setCurrentUser
+}) {
+  const navigate = useNavigate();
 
-  const groupedExpenses = users.map((user) => ({
-    username: user.username,
-    expenses: expenses.filter((exp) => exp.userId === user.id)
-  }));
+  const handleLogout = () => {
+    setCurrentUser(null);
+    navigate("/");
+  };
 
   return (
-    <div className="container">
-      <h2>Admin Dashboard</h2>
+    <div className="dashboard">
+      <div className="sidebar">
+        <h2>Admin Panel</h2>
 
-      <div className="card">
-        <ExpenseSummary expenses={expenses} />
+        <button onClick={() => navigate("/admin")}>
+          Dashboard
+        </button>
+
+        <button onClick={handleLogout}>Logout</button>
       </div>
 
-      {groupedExpenses.map((group) => (
-        <div className="card" key={group.username}>
-          <h3>User: {group.username}</h3>
+      <div className="main">
+        <h2>Admin Dashboard</h2>
 
-          {group.expenses.length === 0 ? (
-            <p>No expenses</p>
-          ) : (
-            group.expenses.map((exp) => (
-              <div key={exp.id} style={{ marginBottom: "10px" }}>
-                {exp.title} - Rs {exp.amount}
-                <button className="btn-danger" onClick={() => deleteExpense(exp.id)}>
-                  Delete
-                </button>
-              </div>
-            ))
-          )}
-        </div>
-      ))}
+        <ExpenseSummary expenses={expenses} />
+
+        {users.map((user) => {
+          const userExpenses = expenses.filter(
+            (exp) => Number(exp.userId) === Number(user.id)
+          );
+
+          return (
+            <div key={user.id} className="card">
+              <h3>{user.username}</h3>
+
+              <ExpenseList
+                expenses={userExpenses}
+                deleteExpense={deleteExpense}
+              />
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

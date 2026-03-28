@@ -1,3 +1,4 @@
+// src/services/userService.js
 
 export const fetchUsers = async () => {
   try {
@@ -5,15 +6,12 @@ export const fetchUsers = async () => {
       "https://jsonplaceholder.typicode.com/users?_limit=3"
     );
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch users");
-    }
-
     const data = await response.json();
+
     const users = data.map((user) => ({
       id: user.id,
       username: user.username.toLowerCase(),
-      password: "1234", 
+      password: "1234",
       role: "user"
     }));
 
@@ -26,6 +24,7 @@ export const fetchUsers = async () => {
 
     return users;
   } catch (error) {
-    throw new Error("Error fetching users");
+    console.log(error);
+    return [];
   }
 };
